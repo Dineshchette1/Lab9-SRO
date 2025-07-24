@@ -1,0 +1,51 @@
+{
+  "incident_id": "2bc705c4",
+  "title": "Post-Mortem: HighLatency",
+  "date": "2025-07-24",
+  "summary": {
+    "incident_title": "HighLatency",
+    "severity": "critical",
+    "duration": "0:05:07.045468",
+    "services_affected": [],
+    "user_impact": "High - outage or severe degradation"
+  },
+  "timeline": [
+    {
+      "time": "2025-07-24T04:07:28.538735",
+      "event": "Incident created",
+      "details": "Alert received: HighLatency",
+      "user": "system"
+    },
+    {
+      "time": "2025-07-24T04:12:35.580704",
+      "event": "Automated Response",
+      "details": "Disabled high_latency mode",
+      "user": "automation"
+    },
+    {
+      "time": "2025-07-24T04:12:35.584187",
+      "event": "status updated",
+      "details": "Changed from \"open\" to \"investigating\"",
+      "user": "system"
+    }
+  ],
+  "root_cause": {
+    "primary_cause": "Performance degradation",
+    "contributing_factors": [
+      "Automation triggered",
+      "High urgency"
+    ]
+  },
+  "resolution": {
+    "immediate_actions": [
+      "Disabled high_latency mode"
+    ],
+    "resolution_method": null
+  },
+  "lessons_learned": {
+    "what_went_well": [],
+    "what_could_be_improved": [],
+    "action_items": []
+  },
+  "follow_up_actions": []
+}

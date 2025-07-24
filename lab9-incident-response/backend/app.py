@@ -6,13 +6,15 @@ import os
 import psycopg2
 import redis
 
-app = Flask(_name_)
+app = Flask(__name__)
 
+# Metrics
 REQUEST_COUNT = Counter('backend_requests_total', 'Total requests', ['method', 'endpoint', 'status'])
 REQUEST_LATENCY = Histogram('backend_request_duration_seconds', 'Request latency')
 ERROR_COUNT = Counter('backend_errors_total', 'Total errors', ['error_type'])
 ACTIVE_CONNECTIONS = Gauge('backend_active_connections', 'Active connections')
 
+# Failure modes
 FAILURE_MODES = {
     'high_latency': False,
     'database_errors': False,
@@ -30,19 +32,23 @@ def health():
 def get_users():
     start_time = time.time()
     try:
+        # Simulate high latency failure mode
         if FAILURE_MODES['high_latency']:
             time.sleep(random.uniform(2, 5))
 
+        # Simulate database errors
         if FAILURE_MODES['database_errors'] and random.random() < 0.3:
             ERROR_COUNT.labels(error_type='database').inc()
             REQUEST_COUNT.labels(method='GET', endpoint='/api/users', status='500').inc()
             return jsonify({'error': 'Database connection failed'}), 500
 
+        # Simulate intermittent failures
         if FAILURE_MODES['intermittent_failures'] and random.random() < 0.1:
             ERROR_COUNT.labels(error_type='intermittent').inc()
             REQUEST_COUNT.labels(method='GET', endpoint='/api/users', status='503').inc()
             return jsonify({'error': 'Service temporarily unavailable'}), 503
 
+        # Normal response
         users = [
             {'id': 1, 'name': 'Alice', 'email': 'alice@example.com'},
             {'id': 2, 'name': 'Bob', 'email': 'bob@example.com'},
@@ -58,7 +64,9 @@ def get_users():
 @app.route('/api/orders')
 @REQUEST_LATENCY.time()
 def get_orders():
+    # Similar structure with different failure patterns
     if FAILURE_MODES['cpu_spike']:
+        # Simulate CPU intensive operation
         for i in range(1000000):
             _ = i ** 2
 
@@ -87,5 +95,5 @@ def get_failure_modes():
 def metrics():
     return generate_latest()
 
-if _name_ == '_main_':
+if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
